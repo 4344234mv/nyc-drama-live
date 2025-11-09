@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NYC DRAMA LIVE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: white; font-family: 'Segoe UI', sans-serif; }
+        .drama-card { background: rgba(255,0,0,0.1); border: 1px solid #ff3366; border-radius: 15px; transition: all 0.3s; }
+        .drama-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,0,102,0.3); }
+        .header { background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); }
+        .btn-drama { background: #ff3366; border: none; }
+        .btn-drama:hover { background: #ff0066; }
+    </style>
+</head>
+<body>
+<div class="container-fluid py-4">
+    <div class="header rounded-4 p-4 mb-4 text-center">
+        <h1 class="display-4">NYC DRAMA LIVE</h1>
+        <p class="lead">Последние 24 часа • {{ total }} жалоб</p>
+        <p class="text-muted">Район: <strong>{{ borough }}</strong></p>
+    </div>
+
+    <div class="text-center mb-4">
+        <a href="/" class="btn btn-drama me-2">ВСЕ РАЙОНЫ</a>
+        <a href="/?borough=BROOKLYN" class="btn btn-outline-light me-2">БРУКЛИН</a>
+        <a href="/?borough=MANHATTAN" class="btn btn-outline-light me-2">МАНХЭТТЕН</a>
+        <a href="/?borough=QUEENS" class="btn btn-outline-light">КВИНС</a>
+    </div>
+
+    <div id="drama-list" class="row">
+        {% for item in drama %}
+        <div class="col-md-6 mb-3">
+            <div class="drama-card p-4">
+                <h5>СЕНСАЦИЯ</h5>
+                <p class="mb-0">{{ item }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+setInterval(async () => {
+    const url = new URL('/api/drama', window.location);
+    url.searchParams.set('borough', '{{ borough }}');
+    const res = await fetch(url);
+    const data = await res.json();
+    document.getElementById('drama-list').innerHTML = data.drama.map(d => 
+        `<div class="col-md-6 mb-3"><div class="drama-card p-4"><h5>СЕНСАЦИЯ</h5><p class="mb-0">${d}</p></div></div>`
+    ).join('');
+}, 30000);
+</script>
+</body>
+</html>
